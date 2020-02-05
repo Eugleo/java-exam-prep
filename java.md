@@ -84,7 +84,7 @@ a == b
 - `null` vyjadřuje prázdný pointer, proto jej lze nastavit **pouze u referenčních typů**
 - do `boolean` lze nastavit **pouze `false` a `true`**
 
-#### Znaky
+#### Chary
 
 - **jeden** znak v jednoduchých uvozovkách: `'c'`
 - číselný literál: `99`
@@ -92,15 +92,16 @@ a == b
 
 #### Čísla
 
+- `byte` má rozsah -128 až 127
 - integery lze zapisovat v různých soustavách:
   - osmičková: začínají na 0, např. `07` 
     - pozor, `08` už je špatně, 8 v osmičkové neexistuje
   - binární: `0b01`
   - šesnáctková: `0xAB`
--  double lze psát i s exponenty jako `1e10`
+-  double lze psát i s exponenty: `1e10`
 - v rámci všech čísel jde pro přehlednost použít podtržítka: `1234_5678 `
 
-### Výjimky
+### Výjimky — teorie
 
 - všechny instance `Throwable`
   - z podtřídy `Error`: nikdy by se neměly odchytávat, signalizují velký problém
@@ -136,7 +137,7 @@ public class A {
 }
 ```
 
-### Multithreading
+### Multithreading — teorie
 
 - spouštění více *vláken* najednou
 - každé vlákno potřebuje vědět, co na něm poběží
@@ -254,7 +255,19 @@ public class Main {
 
 Jsou seřazeny podle tématu.
 
+1. [Multithreading](#Multithreading)
+2. [Třídy](#Třídy)
+3. [Interfacy](#Interfacy)
+4. [Lambda výrazy](#Lambda výrazy)
+5. [Hodnoty proměnných](#Hodnoty proměnných)
+6. [Triky](#Triky)
+7. [Základní znalosti](#Základní znalosti)
+8. [Výjimky](#Výjimky)
+9. [Jednoduché úkoly na psaní kódu](#Jednoduché úkoly na psaní kódu)
+
 ### Multithreading
+
+Zpět na [Zkouškové úlohy](#Zkouškové úlohy).
 
 **Uvažujme následující třídu a předpokládejme, že nějaké vlákno získalo přístup a je uvnitř metody `setX(int, value)`. Pak jiným vláknem:**
 
@@ -287,9 +300,9 @@ class Test {
 }
 ```
 
-1. foo() a bar() jsou pro přístup více vlákny vyloučeny každá sama se sebou i mezi sebou navzájem 
-2. foo() a bar() jsou pro přístup více vlákny vyloučeny každá sama se sebou, ale nikoliv mezi sebou navzájem 
-3. chyba překladu, nedeklaruje se výjimka IllegalMonitorStateException 
+1. `foo()` a `bar()`jsou pro přístup více vlákny vyloučeny každá sama se sebou i mezi sebou navzájem 
+2. `foo()` a `bar()` jsou pro přístup více vlákny vyloučeny každá sama se sebou, ale nikoliv mezi sebou navzájem 
+3. chyba překladu, nedeklaruje se výjimka `IllegalMonitorStateException` 
 
 *Odpověď:* [2]  
 
@@ -336,7 +349,7 @@ synchronized (s) {
 5. `int s = 100; `
 6. `Runnable s = () -> {}; `
 
-*Odpověď*: [2, 3, 4, 6] Za `s` je možno dosadit jakýkoli objekt, viz multithreading.
+*Odpověď*: [2, 3, 4, 6] Za `s` je možno dosadit jakýkoli objekt.
 
 **Doplňte deklaraci hashTable tak, aby obsahovala základní sémantiku hash tabulky — metody `V get (K key)` a `void put(K key, V value)`. Navíc k objektu musí bezpečně přistupovat více vláken najednou (tedy volání metod více vlákny najendou je vyloučeno). Můžete si definovat libovolné další třídy nebo použít cokoliv ze standardní knihovny.**
 
@@ -344,12 +357,14 @@ Metody `get` a `put` by obě měly být `synchronized`, zbytek je jednoduchý.
 
 ### Třídy
 
+Zpět na [Zkouškové úlohy](#Zkouškové úlohy).
+
 **Mějme abstraktní třídu, pak:** 
 
-1. od ni nelze vytvaret instance 
-2. lze od ni dedit, ale nelze predefinovat zadnou jeji metodu 
-3. nelze od ni dedit 
-4. vsechny jeji metody jsou take abstraktni
+1. od ní nelze vytvářet instance 
+2. lze od ni dědit, ale nelze předefinovat žádnou její metodu 
+3. nelze od ni dědit 
+4. všechny jeji metody jsou také abstraktní
 
 *Odpověď:* [1]
 
@@ -435,7 +450,7 @@ class B extends A {
 5. chyba překladu, this nejde přetypovat 
 6. chyba překladu, super není na proměnné 
 
-*Odpověď:* [4]
+*Odpověď:* [4] Viz také [otázka na stack overflow](https://stackoverflow.com/questions/60065506/inherited-attribute-method-static-method-behavior/60065829?noredirect=1#comment106242033_60065829).
 
 **Co se vypíše?**
 
@@ -462,7 +477,7 @@ public class Main {
 
 *Odpověď*: [1] 
 
-Protože voláme **statickou** funkci `foo`, ta se dívá pouze na typ `a` a to je `A`. Zavolá se tedy `A.foo()`. Kdyby se nejednalo o statickou funkci, zavolalo by se `foo()` od objektu A, který je reálně ze třídy `B`.
+Protože voláme **statickou** funkci `foo`, ta se dívá pouze na typ `a` a to je `A` (jinými slovy, není *virtualizovaná*) Zavolá se tedy `A.foo()`. Kdyby se nejednalo o statickou funkci, zavolalo by se `foo()` od objektu `a`, který je reálně ze třídy `B`.
 
 **Rozhodněte, co bude na standardním výstupu po spuštění programu:** 
 
@@ -492,7 +507,7 @@ class B extends A {
 4. nelze aplikovat klicove slovo ***super*** na atributy 
 5. nelze prepisovat atributy tridy, od ktere se dedi
 
-*Odpověď:* [3] Podobné jako otázka výše.
+*Odpověď:* [3] Podobné jako otázka výše. Tomuto se říká *field hiding*.
 
 **Co se vypíše?**
 
@@ -555,9 +570,13 @@ public class Main {
 2. C 
 3. ABC 
 
-*Odpověď:* [3] `super()` se totiž volá implicitně, a každá třída implicitně extenduje `Object` (nebo explicitně nějakou jeho podtřídu)
+*Odpověď:* [3] 
+
+`super()` se totiž z konstruktoru volá implicitně, a každá třída implicitně extenduje `Object` (nebo explicitně nějakou jeho podtřídu)
 
 ### Interfacy
+
+Zpět na [Zkouškové úlohy](#Zkouškové úlohy).
 
 **Co platí o rozhraních (*interface*):** 
 
@@ -589,7 +608,7 @@ class C implements A, B { }
 
 *Odpověď:* [2] 
 
-C má totiž metodu s dvěma implementacemi a neví, kterou si vybrat. Správně by mělo `hello` být v C overridnuté a implementované znovu.
+C má metodu s dvěma implementacemi a neví, kterou si vybrat. Správně by mělo `hello()` být v C overridnuté a implementované znovu.
 
 **Která tvrzení jsou správná?**
 
@@ -618,7 +637,9 @@ public class B implements A {
 3. A se přeloží bez chyby, ale v B je chyba: defaultní metody z interface se nedají předefinovat
 4. A se přeloží bez chyby, ale v B je chyba: před přepsáním metody `bar` chybí klíčové slovo `default`
 
-*Odpověď*: [1] Defaultní implementace je pouze "záloha" v případě, že metoda není implementována ve třídě.
+*Odpověď*: [1] 
+
+Defaultní implementace je pouze "záloha" v případě, že metoda není implementována ve třídě.
 
 **Co se vypíše?**
 
@@ -642,11 +663,13 @@ class B extends A implements Iface {
 1. Interface
 2. Class
 3. Nevypíše se nic
-4. nepůjde přeložit 
+4. Nepůjde přeložit 
 
 *Odpověď*: [2]
 
 ### Lambda výrazy
+
+Zpět na [Zkouškové úlohy](#Zkouškové úlohy).
 
 **Máme definované `Callable`, `Supplier` a `Predicate`. Která z následujících přiřazení lamda výrazu jsou správná (kompilátor je přeloží):**
 
@@ -724,6 +747,8 @@ list.stream.forEach(a -> System.out.println(a));
 
 ### Hodnoty proměnných
 
+Zpět na [Zkouškové úlohy](#Zkouškové úlohy). Viz [Literály](#Literály).
+
 **Atribut (= field, pozn. Evžena) typu `int` bez explicitní inicializace:**
 
 1. je inicializován hodnotou 0 
@@ -762,7 +787,9 @@ Atribut je defaultně 0 (případně *false* nebo *null*, podle typu), ale kdyby
 3. `String s = "foo" + 'bar';`
 4. `byte x = 255;`
 
-*Odpověď:* [3, 4] mezi `''` musí být `char` (tj. číslo nebo jeden znak), a `byte` má rozsah -128 až 127
+*Odpověď:* [2, 3, 4] 
+
+Mezi `''` musí být `char` (tj. jeden znak) a `byte` má rozsah -128 až 127.
 
 **Co jde přiřadit do proměnné typu boolean?**
 
@@ -803,9 +830,13 @@ System.out.println(i2);
 4. 6 6 
 5. nic
 
-*Odpověď*: [3] `i2` se změnou `i1` nezmění, protože se jedná o hodnotové typy a je to tedy kopie `i1`. Kdyby šlo o objekty (třeba stringy), ukazovaly by `i1` a `i2` na stejný objekt a změna jednoho by tedy změnila i druhý.
+*Odpověď*: [3]
+
+ `i2` se změnou `i1` nezmění, protože se jedná o hodnotové typy a je to tedy kopie `i1`. Kdyby šlo o objekty (třeba stringy), ukazovaly by `i1` a `i2` na stejný objekt a změna jednoho by tedy změnila i druhý.
 
 ### Triky
+
+Zpět na [Zkouškové úlohy](#Zkouškové úlohy).
 
 **Lze napsat deklaraci proměnné i tak, aby následující 
 cyklus byl nekonečný?**
@@ -825,13 +856,15 @@ while (i <= j && j <= i && i != j) {} // 3.
 
 **Příkazem `import static ...` lze naimportovat do lokálniho jmenného prostoru:** 
 
-1. vsechny atributy a metody tridy 
-2. pouze staticke atributy tridy 
-3. pouze staticke metody tridy 
-4. pouze staticke metody a staticke atributy tridy 
-5. pouze atributy a metody oznacene anotaci ``@exportStatic``
+1. všechny atributy a metody třídy 
+2. pouze statické atributy třídy 
+3. pouze statické metody třídy 
+4. pouze statické metody a statické atributy třídy 
+5. pouze atributy a metody označené anotací ``@exportStatic``
 
-*Odpověď:* [4] Analogicky k běžnému `import`, který importuje třídy z balíků, `import static` importuje statické věci ze tříd.
+*Odpověď:* [4] 
+
+Analogicky k běžnému `import`, který importuje třídy z balíků, `import static` importuje statické věci ze tříd.
 
 **Co bude vystupem nasledujiciho useku kodu?** 
 
@@ -898,7 +931,7 @@ Collection<? super String> co = new ArrayList<Object>();
 
 ### Základní znalosti
 
-Většinou jsou pokryty v kapitolách výše, nebo se jedná o jednoduché věci jako "rovnítko u stringů" a "equals u objektů".
+Zpět na [Zkouškové úlohy](#Zkouškové úlohy). Většinou jsou pokryty v kapitolách výše, nebo se jedná o jednoduché věci jako "equals u objektů".
 
 **Kam lze napsat `abstract`?**
 
@@ -935,16 +968,18 @@ Většinou jsou pokryty v kapitolách výše, nebo se jedná o jednoduché věci
 int i = 9; 
 switch (i) { 
   default: System.out.println("default"); 
-  0: System.out.println("nula"); 
+  case 0: System.out.println("nula"); 
       break; 
-  1: System.out.println("jedna"); 
+  case 1: System.out.println("jedna"); 
       break; 
-  2: System.out.println("dva"); 
+  case 2: System.out.println("dva"); 
       break; 
 } 
 ```
 
-*Odpověď:* *default nula*, protože za defaultem není `break`
+*Odpověď:* *default nula*
+
+Za defaultem není `break`, takže poté, co matchne, se pokračuje v tělech casů dokud nepřijde break.
 
 **Co může v následujícím kódu být místo `/* modifier */`?**
 
@@ -961,7 +996,7 @@ public class MyClass {
 5. `volatile` 
 6. `override` 
 
-*Odpověď*: [1, 2, 3] Volatile je pouze pro atributy, friendly a override nejsou klíčová slova.
+*Odpověď*: [1, 2, 3] `volatile` je pouze pro atributy, `friendly` a `override` nejsou klíčová slova.
 
 **Co se stane při překládání?**
 
@@ -998,17 +1033,19 @@ if ("abcd".equals("abcd")) System.out.println("Hi!"); // 5
 
 ### Výjimky
 
-Viz výjimky výše.
+Zpět na [Zkouškové úlohy](#Zkouškové úlohy). Viz [Výjimky — teorie](#Výjimky — teorie).
 
 **Které výjimky je nutné odchytit nebo deklarovat?** 
 
 1. všechny 
-2. potomky java.lang.Error 
-3. potomky java.lang.Exception 
-4. potomky java.lang.RuntimeException 
+2. potomky `java.lang.Error `
+3. potomky `java.lang.Exception` 
+4. potomky `java.lang.RuntimeException` 
 5. žádné 
 
-*Odpověď:* [3] Samozřejmě kromě potomků RuntimeException, kteří jsou technicky také potomci Exception.
+*Odpověď:* [3] 
+
+Samozřejmě kromě potomků `RuntimeException`, kteří jsou technicky také potomci `Exception`.
 
 **Co je správná deklarace?**
 
@@ -1041,7 +1078,9 @@ public class A {
 
 *Odpověď*: [1, 3, 4]
 
-**Napište program, který přkopíruje jeden soubor do druhého. Ošetřete všechny výjimky.**
+`Error` a `RuntimeException` je možno vyhodnit kdykoli i bez předchozí deklarace v `throws`.
+
+**Napište program, který překopíruje jeden soubor do druhého. Ošetřete všechny výjimky.**
 
 Následující kód nemá vše potřebné, ale základ lze poznat.
 
@@ -1058,7 +1097,7 @@ try (InputFileStream ifs = ... ; OutputFileStream ofs = ...;) {
 
 ### Jednoduché úkoly na psaní kódu
 
-První dvě řešení jsou převzata z [Matfiz: Java](http://mff.lokiware.info/Java?v=i1q&fbclid=IwAR0JPmCV24V1GZAKSYkjeIdNf38-U2z75Q5N3TyHZVpoH_7A6_E-JsAIwwA). Zbytek se týká většinou nějakého jednoduchého chytáku typu `equals` u stringů.
+První dvě řešení jsou převzata z [Matfiz: Java](http://mff.lokiware.info/Java?v=i1q&fbclid=IwAR0JPmCV24V1GZAKSYkjeIdNf38-U2z75Q5N3TyHZVpoH_7A6_E-JsAIwwA). Zbytek se týká většinou nějakého jednoduchého chytáku typu `equals` u stringů. Zpět na [Zkouškové úlohy](#Zkouškové úlohy).
 
 **Napište metodu, která má dva parametry typu `int`, *hrubou mzdu* a *daň v procentech*, a vrací hodnotu typu `double` udávající daň k zaplacení. Ověřte, že daň je v rozmezí 0–100 a mzda je nezáporná, pokud parametry nejsou v pořádku vyhoďte výjimku `MyException`, která je přímým potomkem `java.lang.Exception` (předpokládá se, že je deklarovaná a importovaná).**
 
@@ -1159,7 +1198,8 @@ public static int count(Person[] array, int year, String name) {
 
 ```java
 class Complex { 
-	int re; int im; 
+	int re; 
+    int im; 
 }
 ```
 
@@ -1169,13 +1209,13 @@ class Complex {
 class Complex { 
 	int re; int im; 
   
-  @Override
-  public boolean equals(Object other) { 
-    if (other instanceof Complex) {
-        Complex that = (Complex) other; 
-        return this.re == that.re && this.im == that.im; 
-    } 
-    return false; 
+	@Override
+	public boolean equals(Object other) { 
+		if (other instanceof Complex) {
+			Complex that = (Complex) other; 
+			return this.re == that.re && this.im == that.im; 
+    	} 
+    	return false; 
 	}
 }
 ```
