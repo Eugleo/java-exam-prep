@@ -1,4 +1,4 @@
-# Java
+# Java (zkouška)
 
 Následuje seznam důležitých věcí, které je třeba vědět, a pod tím zkouškové příklady.
 
@@ -144,7 +144,7 @@ public class A {
   - samotná třída `Thread` je runnable, takže jí můžeme subclassovat a implementovat `run` sami (nedoporučuje se)
 - vlákno se po konstrukci musí spustit metodou `.start()`
 - vlákno jde přerušit pomocí `.interrupt()`, musí na to být ale připraveno (odchytnout `InterruptedException` nebo kontrolovat `Thread.interrupted`)
-- současné vlákno lze pozastavit do doby, než se dokončí vlánko `t` pomocí `t.join()`
+- současné vlákno lze pozastavit do doby, než se dokončí vlákno `t` pomocí `t.join()`
 
 Kdyby dvě vlákna najednou upravovala jeden objekt, mohlo by dojít k chybám; proto má každý objekt *zámek*, který určuje, které vlákno s daným objektem zrovna pracuje.
 
@@ -194,6 +194,7 @@ Pokud potřebujeme, aby jedno vlákno čekalo na znamení, že se má spustit, o
 - jednodušší než se ručně starat o vlákna a mít jeden task (Runnable objekt) = jedno vlákno
 - používají se množiny dlouho existujících vláken (**thread pool**), z nichž každé dělá >1 task (nemusí se tak často rušit a zase vyrábět)
 - `FixedThreadPool` operuje s konstantním počtem vláken, zatímco `ForkJoinPool` se hodí pro rekurzivní problémy (buďto vyřeším problém na svém vlákně, nebo ho rozpůlíme mezi dvě)
+- počet dostupných jader je možno získat pomocí `Runtime.getRuntime().availableProcessors()`
 
 ### Abstraktní třídy
 
