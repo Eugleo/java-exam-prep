@@ -123,7 +123,9 @@ public class LoopTest {
 
 *Řešení:* 0
 
-Nevím, proč.
+Má to co dočinění s *floating-point* čísly. `START` je sice na začátku `int`, kvůli porovnání s `f` je však převeden na `float`. `START` jen o málo menší než $2^{31}$, proto v jeho binárním zápisu bude určitě 31. bit jednička. `float` čísla jsou sice 32 bitová, ale 1 bit z toho je na znaménko, dalších 8 je na exponent a tak na samotné číslo zbude pouze 23 bitů. 
+
+Protože k uložení start potřebujeme mít 31. bit nastavený na 1, při převodu na `float` si ze `START` necháme následujících 23 bitů: [31., 30., 29., ..., 8.] — jinými slovy prvních sedm bitů ze `START` odstřihneme, neboť se nám do floatu nevlezou. Protože přičtená 50 se vleze do prvních sedmi bitů, a my těchto sedm bitů poté odstřihneme, přičtení 50 se vůbec neprojeví a platí `START == f == START + 50` (pokud je `START` převeden na `float`).
 
 ## Cvičení 3
 
@@ -146,7 +148,7 @@ public class Test01 {
 
 *Řešení:* `false`
 
-`finally` přebíjí většinu věcí, i `return`
+`finally` přebíjí většinu věcí, i `return`.
 
 **Co se vypíše?**
 
@@ -165,7 +167,7 @@ public class Test01 {
 
 *Řešení:* "Hello world!"
 
-`finally` přebíjí většinu věcí, ale `System.exit()` je jedna z výjimek (kromě něj i `halt`) a pak už většinou jen pády JVM nebo přímo operačního systému.
+`finally` přebíjí většinu věcí, ale `System.exit()` je jedna z výjimek — prostě rovnou ukončí průběh programu. Kromě něj takto funguje i `halt` a pak už většinou jen pády JVM nebo samotného operačního systému.
 
 **Co se vypíše?**
 
@@ -185,7 +187,7 @@ class ParamsTest {
 
 *Řešení:* ParamsTest(long[] a)
 
-Podle skutečných parametrů se vybere ta nejspecifičtější implementace (zde `long[] a`).
+Podle skutečných parametrů se vybere ta nejspecifičtější vyhovující implementace (zde `long[] a`).
 
 **Co se vypíše?** (zkouškový příklad)
 
@@ -272,7 +274,7 @@ public class Test02 {
 
 *Řešení:* Nepřeloží se, ve třídě Test02 je chyba.
 
-Deklarace `className` v `B` schová (doslova se to jmenuje field hiding) `className` z `A`. To, že je sama `private` na věci nic nemění. Proto se nám `className` z `B` úplně ztratí (původní je schovaná a druhá `private`) a je chyba snažit se jej dosáhnout.
+Deklarace `className` v `B` schová atribut `className` z `A ` (doslova se to jmenuje *field hiding*). To, že je sama `private` na věci nic nemění. Protože původní `className` z `A` je schovaná a `className` z `B`  je zase `private`, je chyba vůbec se snažit tohoto atributu dosáhnout.
 
 ## Cvičení 5
 
@@ -304,7 +306,7 @@ public enum Test {
 
 *Řešení:* Je to úplně v pořádku, vypíše se Hello.
 
-`enum` je v podstatě jen vylepšená třída, proto může obsahovat statické metody. Nemůže však dědit, neboť implicitně již dědí od `java.lang.Enum`. Může dokonce obsahovat i obstraktní metody, pak je ale musí implementovat každý z prvků enumu.
+`enum` je v podstatě jen vylepšená třída, proto může obsahovat statické metody. Nemůže však dědit, neboť implicitně již dědí od `java.lang.Enum`. Může dokonce obsahovat i abstraktní metody, pak je ale musí implementovat každý z prvků enumu.
 
 ## Cvičení 6
 
@@ -366,7 +368,7 @@ class String {
 
 *Řešení:* Přeloží se, ale při runtimu vyhodí chybu, že mu chybí metoda `main`.
 
-`main` má totiž v této chvíli mít hlavičku `public static void main(java.lang.String[] args)`, protože `String` je teď naše třída.
+`main` má totiž v této chvíli mít hlavičku `public static void main(java.lang.String[] args)`, protože `String` je teď ta naše nová třída a ne původní `String`.
 
 **Lze třídu `B` nadeklarovat tak, aby program vypsal `false`? (bez přepsání `equals`)** 
 
@@ -414,7 +416,7 @@ public class Test01 {
 
 *Řešení:* Ping Pong
 
-Obě metody jsou `static synchronized`, čili berou zámek přímo od třídy `Test01`. Když už jsme v main, má současné vlákno zámek (protože vstoupilo do `synchronized` bloku) a tak se vlákno `t` (poažmo metoda `pong()`) spustí až poté, co skončí to naše vlákno.
+Obě metody jsou `static synchronized`, čili berou zámek přímo od třídy `Test01`. Když už jsme v `main`, má současné vlákno zámek (protože vstoupilo do `synchronized` bloku) a tak se vlákno `t` (potažmo metoda `pong()`) spustí až poté, co skončí to naše vlákno.
 
 **Co se vypíše?**
 
@@ -433,7 +435,7 @@ class SelfInterruption {
 
 *Řešení:* Interrupted: false
 
-`Thread.interrupted()` totiž nejen vrátí současnou hodnotu `.interrupted()`, ale také ji resetuje na `false`.
+`Thread.interrupted()` totiž nejen vrátí současnou hodnotu `.interrupted()`, ale také ji resetuje na `false`. Kdyby se místo toho použilo `this.isInterrupted()`, který po vrácení žádný reset neprovádí, vypsalo by se *Interrupted: true*.
 
 ## Cvičení 9
 
@@ -463,7 +465,7 @@ public class Test01 {
 
 *Řešení:* ain
 
-V `case` nejsou breaky, takže word je vždy nakonec nastaven na `new StringBuffer('M')`. Protože `StringBuffer` dostal `char`, potažmo `int`, bere to jako hranici kapacity (ne jako první písmeno — to by musel dostat `"M"`).
+V `case` nejsou breaky, takže word je vždy nakonec nastaven na `new StringBuffer('M')`. Protože `StringBuffer` dostal `char` (potažmo `int`) bere to jako hranici kapacity (ne jako první písmeno — to by musel dostat `"M"`).
 
 **Co se vypíše?**
 
@@ -478,7 +480,7 @@ public class Test02 {
 
 *Řešení:* Ha  169
 
-`char` + `char` je v tomto případě interpretováno jako součet intů. Pro zajímavost, `println("" + 'H' + 'a')` by vypsalo skutečně `Ha` [*laughs in javascript*].
+`char` + `char` je v tomto případě interpretováno jako součet intů. Pro zajímavost, `println("" + 'H' + 'a')` by vypsalo skutečně `Ha` [[*laughs in javascript*](https://www.destroyallsoftware.com/talks/wat)].
 
 ## Cvičení 10
 
@@ -506,11 +508,11 @@ public class Increment {
 
 *Řešení:* 0
 
-`j++` vrátí 0 a nastaví `j` na 1; `j = j++` pak vezme 0 z `j++` a uloží jí do `j`.
+(Myslím, že) `j++` vrátí 0 a nastaví `j` na 1; `j = j++` pak vezme 0 z `j++` a uloží jí do `j`.
 
 ## Cvičení 11
 
-**Lze od této třídy (bez použití reflection API) vytvořit další instance (kromě instance v atributu INSTANCE)?**
+**Lze od této třídy (bez použití reflection API) vytvořit další instance (kromě instance v atributu `INSTANCE`)?**
 
 ```java
 public class Dog implements Serializable {
@@ -522,7 +524,7 @@ public class Dog implements Serializable {
 }
 ```
 
-*Řešení:* Leda bychom přidali něco do třídy samotné (jinak mám příklad tzv. **singleton pattern**, kdy máme třídu pouze s jedním objektem).
+*Řešení:* Leda bychom přidali něco do třídy samotné (jinak máme příklad tzv. **singleton pattern**, což je třída pouze s jednou instancí, zde konkrétně `INSTANCE`).
 
 ```java
 public class Dog implements Serializable {
@@ -540,7 +542,7 @@ public class Dog implements Serializable {
 Dog d = Dog.getDog();
 ```
 
-V tomto případě naopak používám tzv. **factory pattern**.
+V tomto případě naopak používám tzv. **factory pattern** (máme metody, které nejsou konstruktory, ale přesto *vyrábějí* a vrací objekt své třídy).
 
 ## Cvičení 12
 
@@ -550,7 +552,7 @@ V tomto případě naopak používám tzv. **factory pattern**.
 while (i != i + 0) { }
 ```
 
-*Řešení:* Ano, `String i = "a"`, potom `i + 0 == "a0"`.
+*Řešení:* Ano, např. `String i = "a"`, potom `i + 0 == "a0"`.
 
 **Lze napsat deklaraci proměnných `i` a `j` tak, aby následující cyklus byl nekonečný?**
 
