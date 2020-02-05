@@ -838,7 +838,7 @@ System.out.println(i2);
 
 Zpět na [Zkouškové úlohy](#Zkouškové úlohy).
 
-**Lze napsat deklaraci proměnné i tak, aby následující 
+**Lze napsat deklaraci proměnné `i` tak, aby následující 
 cyklus byl nekonečný?**
 
 ```java
@@ -854,7 +854,7 @@ while (i <= j && j <= i && i != j) {} // 3.
 2. `i = ""`, stringy lze sčítat s čísly, číslo se převede na string
 3. `i = new Integer(1)` a `j = new Integer(1)`, jejich porovnání poté porovnává reference
 
-**Příkazem `import static ...` lze naimportovat do lokálniho jmenného prostoru:** 
+**Příkazem `import static ...` lze naimportovat do lokálního jmenného prostoru:** 
 
 1. všechny atributy a metody třídy 
 2. pouze statické atributy třídy 
@@ -866,7 +866,7 @@ while (i <= j && j <= i && i != j) {} // 3.
 
 Analogicky k běžnému `import`, který importuje třídy z balíků, `import static` importuje statické věci ze tříd.
 
-**Co bude vystupem nasledujiciho useku kodu?** 
+**Výstupem násedujícího úseku kódu?** 
 
 ```java
 public class A { 
@@ -897,7 +897,7 @@ public class A {
 
 *Odpověď:* [2]
 
-**Napište deklaraci proměnné x tak, aby po provedení x = x + 0 neměla původní hodnotu. Pokud to nejde, zdůvodněte. **
+**Napište deklaraci proměnné `x` tak, aby po provedení `x = x + 0 `neměla původní hodnotu. Pokud to nejde, zdůvodněte. **
 
 *Řešení:*
 
