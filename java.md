@@ -201,9 +201,14 @@ Pokud potřebujeme, aby jedno vlákno čekalo na znamení, že se má spustit, o
 
 - deklarovány pomocí `abstract class ...`
 - nelze z nich tvořit objekty, ale lze z nich dědit (jsou vlastně podobné interfacům)
-- mohou, ale nemusí, obsahovat abstraktní metody; mohou také obsahovat neabstraktní metody
-  - abstraktní metody jsou také označeny `abstract`
-  - abstraktní metody nemají implementaci (podobně jako např. v interfacu, tam ale nejsou označeny `abstract`)
+- mohou, ale nemusí, obsahovat abstraktní metody
+- mohou, ale nemusí obsahovat neabstraktní (běžné) metody
+
+Co jsou abstraktní metody?
+
+- abstraktní metody nemají implementaci (podobně jako např. metody v interfacu, tam ale nejsou označeny `abstract`)
+- jsou také označeny `abstract`
+- vždy musí být v abstraktní třídě
 
 Jak se tedy abstraktní třídy od interfaců liší?
 
@@ -358,6 +363,24 @@ Metody `get` a `put` by obě měly být `synchronized`, zbytek je jednoduchý.
 ### Třídy
 
 Zpět na [Zkouškové úlohy](#Zkouškové úlohy).
+
+**Upravte následující kód tak, aby se zkompiloval:**
+
+```java
+public class Class {
+    abstract void foo();
+}
+```
+
+*Řešení*:
+
+```java
+public abstract class Class {
+    abstract void foo();
+}
+```
+
+Abstraktní metody musí být v abstraktní třídě.
 
 **Mějme abstraktní třídu, pak:** 
 
@@ -817,7 +840,7 @@ Mezi `''` musí být `char` (tj. jeden znak) a `byte` má rozsah -128 až 127.
 **Co se vypíše?**
 
 ```java
-int i1 = 5;
+Integer i1 = 5;
 int i2 = i1;
 i1 += 1;
 System.out.println(i1);
@@ -832,7 +855,7 @@ System.out.println(i2);
 
 *Odpověď*: [3]
 
- `i2` se změnou `i1` nezmění, protože se jedná o hodnotové typy a je to tedy kopie `i1`. Kdyby šlo o objekty (třeba stringy), ukazovaly by `i1` a `i2` na stejný objekt a změna jednoho by tedy změnila i druhý.
+ Do `i2` se uloží (zkopíruje) pouze unwrapovaná hodnota z `i1`; změna `i1` tedy `i2` neovlivní.
 
 ### Triky
 
@@ -927,6 +950,24 @@ Pro zajímavost, druhý  a třetí bod by šly opravit přidáním otazníku:
 Collection<? extends Object> co = new ArrayList<String>();
 // <nějaká superclassa Stringu> ~ Object
 Collection<? super String> co = new ArrayList<Object>();
+```
+
+**Napište metodu `void copy(seznamA, seznamB)` (hlavička je pouze přibližná), která zkopíruje prvky seznamu A do seznamu B pomocí metod `T get(int i)` a `void add(T element)` (kde T je typová proměnná). Pozor, seznam A může obsahovat jiné typy než seznam B, vždy ale takové, aby kopírování bylo možná (např. seznam A bude `List<String>` a seznam B `List<Object>`).**
+
+*Řešení:*
+
+```java
+public static <T> void copy(List<? extends T> a, List<T> b) {
+    for (T item: a) {
+        b.add(a);
+    }
+}
+```
+
+Nejdůležitější je hlavička, kde se používá `<T>` (deklarování toho, že hodláme použít typovou proměnnou) a poté `?`. Otazník značí "jakýkoli typ" a `? extends T` znamená "jakýkoli typ, který je podtřídou T", kde `T` je obsah druhého seznamu. Akceptovalo se i (o trochu horší) řešení se `super`, které funguje analogicky:
+
+```java
+public static <T> void copy(List<T> a, List<? super T> b) { ... }
 ```
 
 ### Základní znalosti
@@ -1152,6 +1193,27 @@ public class DynamicArray{
 
 Pozor na porovnávání stringů přes `.equals()`.
 
+**Napište metodu, která v daném seznamu spočítá osoby alespoň tak staré, jak je zadáno v argumentu parametrem `age`. Osoby s neplatným jménem (`null` nebo `""`) do hledání nezahrnujte.**
+
+```java
+class Person { String name; int age; }
+```
+
+*Řešení:*
+
+```java
+public static int countOlder(Person[] list, int age) {
+    return 
+      (int) Arrays.stream(list)
+        .filter(p -> p.name != null)
+        .filter(p -> !p.name.equals(""))
+        .filter(p -> p.age >= age)
+        .count(); // .count() vrací long, proto na začátku ten cast do (int)
+}
+```
+
+Dá se samozřejmě řešit i for-loopem. Důležité je nejprve odstranit lidi s `null` jménem, protože jinak bychom kontrolovali `null.age` nebo `null.name.equals("")` a spadlo by nám to. Stringy porovnáváme s ``.equals()`. Dobré je také vědět, že `filter` z původního streamu vybere prvky, které *splňují* uvedenou podmínku (má tedy trochu neintuitivní jméno).
+
 **Napište metodu, která vrátí řetězec obsahující n-krát řetězec, který bere v parametru. Např. pro `3` a `"Hello"` vrátí `"HelloHelloHello"`:**
 
 ```java
@@ -1221,3 +1283,4 @@ class Complex {
 ```
 
 Musíme zkontrolovat, že je `other` stejná třída pomocí `instanceof` a potom teprve můžeme porvnávat.
+
