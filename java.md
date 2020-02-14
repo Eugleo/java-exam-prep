@@ -918,7 +918,9 @@ public class A {
 4. 2 
 5. hodnota se můze lišit při opakovaném spuštění programu
 
-*Odpověď:* [2]
+*Odpověď:* [4]
+
+Jedná se o tzv. *inicializační blok*. Je to blok kódu, který proběhne při každém vytvoření objektu od dané třídy, a to *před* konstruktorem. Inicializačních bloků může mít třída více, poté jsou spuštěny odshora jeden po druhém (a po nich teprve konstruktor).
 
 **Napište deklaraci proměnné `x` tak, aby po provedení `x = x + 0 `neměla původní hodnotu. Pokud to nejde, zdůvodněte. **
 
