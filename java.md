@@ -71,12 +71,21 @@ public class MyClass {
 Porovnání `a == b` porovnává hodnoty uložené v `a` a `b`. U referečních typů jsou v `a` a `b` uložen pouze pointery na nějaké objekty, ne ty objekty samotné, proto například neplatí
 
 ```java
-String a = "a";
-String b = "a";
-a == b
+String a = new String("a");
+String b = new String("a");
+a == b // false
 ```
 
  `a` a `b` jsou v tomto případě pointery na dvě různá místa v paměti, tedy se nerovnají. To, jestli jsou na těchto *dvou různých místech* uloženy stringy se stejnou hodnotou zjistíme až pomocí `a.equals(b)`.
+ Pozor ale na následující případ
+
+ ```java
+String a = "a";
+String b = "a";
+a == b  // true
+```
+
+Tady Java compiler použije tzv. **string pool** a obě proměnné odkáže na stejný string v paměti. 
 
 ### Literály
 
